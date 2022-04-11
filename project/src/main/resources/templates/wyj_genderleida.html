@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>数据对比雷达图</title>
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+</head>
+<body>
+<div th:insert="common/bar::top"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="table-responsive" align="center">
+                <div th:id="main" style="width: 100%;height: 600px;">
+                    <script type="text/javascript">
+                        $(function () {
+                            var myecharts = echarts.init(document.getElementById("main"));
+                            /*var male=new Array();
+                            var female=new Array();*/
+                            $.get("/genderleida.do", function (data) {
+                                /*for(i=0;i<data.length;i++){
+                                    ages.push(data[i].age);
+                                    nums.push(data[i].count);
+                                }*/
+                                /*male.push(data[0].FFP_TIER);
+                                male.push(data[0].age);
+                                male.push(data[0].FLIGHT_COUNT)*/
+                                /*console.log(ages);
+                                console.log(nums);*/
+                                console.log(data);
+                                var option = {
+                                    title: {
+                                        text: '男女乘客各方面数据雷达图'
+                                    },
+                                    legend: {
+                                        data: ['男性（Male）', '女性（Female）']
+                                    },
+                                    radar: {
+                                        // shape: 'circle',
+                                        indicator: [
+                                            {name: '会员等级（Level）', max: 4.2},
+                                            {name: '年龄（Age）', max: 45.0},
+                                            {name: '飞行次数（Flight Count）', max: 15.0},
+                                            {name: '平均飞行时间间隔（Avg Internal）', max: 75.0},
+                                            {name: '总积分（Points）', max: 15000.0},
+                                            {name: '平均折扣率（Avg Discount）', max: 1.0}
+                                        ]
+                                    },
+                                    series: [{
+                                        name: '预算 vs 开销（Budget vs spending）',
+                                        type: 'radar',
+                                        data: [
+                                            {
+                                                value: [data[0].ffp_TIER, data[0].age, data[0].flight_COUNT, data[0].avg_INTERVAL, data[0].points_Sum, data[0].avg_discount],
+                                                name: '男性（Male）'
+                                            },
+                                            {
+                                                value: [data[1].ffp_TIER, data[1].age, data[1].flight_COUNT, data[1].avg_INTERVAL, data[1].points_Sum, data[1].avg_discount],
+                                                name: '女性（Female）'
+                                            }
+                                        ]
+                                    }]
+                                };
+                                myecharts.setOption(option);
+                            }, "json")
+                        })
+                    </script>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

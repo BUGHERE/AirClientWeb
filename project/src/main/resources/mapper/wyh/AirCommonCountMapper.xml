@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nk.wyh.dao.AirCommonCountDAO">
+    <select id="getAllWorkProvinceCNCount" resultType="com.nk.wyh.domain.AirCommonCount">
+        select work_province,number from wyh_work_province_cn_count;
+    </select>
+    <select id="getAllFfpTierCount" resultType="com.nk.wyh.domain.AirCommonCount">
+        select ffp_tier,number from wyh_ffp_tier_count;
+    </select>
+    <select id="getAllFfpDateYearCount" resultType="com.nk.wyh.domain.AirCommonCount">
+        select ffp_date_year as ffp_date,number from wyh_ffp_date_year_count;
+    </select>
+    <select id="getAllFiveCount" resultType="com.nk.wyh.domain.AirCommonCount">
+        select ffp_date,ffp_tier,work_country,number from wyh_five_count_final;
+    </select>
+</mapper>

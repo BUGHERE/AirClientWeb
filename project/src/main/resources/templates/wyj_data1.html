@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>飞行次数/票价/积分大数据表</title>
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="table-responsive">
+                <div style="text-align: center;color: #007bff">飞行次数/票价/积分大数据表</div>
+                <div th:id="main" style="width: 100%;height: 600px">
+                    <script type="text/javascript">
+                        $(function () {
+                            var myecharts = echarts.init(document.getElementById("main"));
+                            $.get("/data1.do", function (data) {
+                                var sizeValue = '57%';
+                                var symbolSize = 2.5;
+                                var option = {
+                                    legend: {},
+                                    tooltip: {},
+                                    toolbox: {
+                                        left: 'center',
+                                        feature: {
+                                            dataZoom: {}
+                                        }
+                                    },
+                                    grid: [
+                                        {right: sizeValue, bottom: sizeValue},
+                                        {left: sizeValue, bottom: sizeValue},
+                                        {right: sizeValue, top: sizeValue},
+                                        {left: sizeValue, top: sizeValue}
+                                    ],
+                                    xAxis: [
+                                        {
+                                            type: 'value',
+                                            gridIndex: 0,
+                                            name: '总飞行次数',
+                                            axisLabel: {rotate: 50, interval: 0}
+                                        },
+                                        {
+                                            type: 'value',
+                                            gridIndex: 1,
+                                            name: '第一年飞行总次数',
+                                            axisLabel: {rotate: 50, interval: 0}
+                                        },
+                                        {
+                                            type: 'value',
+                                            gridIndex: 2,
+                                            name: '第二年飞行总次数',
+                                            axisLabel: {rotate: 50, interval: 0}
+                                        },
+                                        {
+                                            type: 'value',
+                                            gridIndex: 3,
+                                            name: '第一年飞行总次数',
+                                            axisLabel: {rotate: 50, interval: 0}
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {type: 'value', gridIndex: 0, name: '总积分'},
+                                        {type: 'value', gridIndex: 1, name: '第一年总票价'},
+                                        {type: 'value', gridIndex: 2, name: '第二年总票价'},
+                                        {type: 'value', gridIndex: 3, name: '第二年飞行总次数'}
+                                    ],
+                                    dataset: {
+                                        /*dimensions: [
+                                            'Income',
+                                            'Life Expectancy',
+                                            'Population',
+                                            'Country',
+                                            {name: 'Year', type: 'ordinal'}
+                                        ],*/
+                                        source: data
+                                    },
+                                    series: [
+                                        {
+                                            type: 'scatter',
+                                            symbolSize: symbolSize,
+                                            xAxisIndex: 0,
+                                            yAxisIndex: 0,
+                                            encode: {
+                                                x: '总飞行次数',
+                                                y: '总积分',
+                                                tooltip: [0, 1, 2, 3, 4]
+                                            }
+                                        },
+                                        {
+                                            type: 'scatter',
+                                            symbolSize: symbolSize,
+                                            xAxisIndex: 1,
+                                            yAxisIndex: 1,
+                                            encode: {
+                                                x: '第一年飞行总次数',
+                                                y: '第一年总票价',
+                                                tooltip: [0, 1, 2, 3, 4]
+                                            }
+                                        },
+                                        {
+                                            type: 'scatter',
+                                            symbolSize: symbolSize,
+                                            xAxisIndex: 2,
+                                            yAxisIndex: 2,
+                                            encode: {
+                                                x: '第二年飞行总次数',
+                                                y: '第二年总票价',
+                                                tooltip: [0, 1, 2, 3, 4]
+                                            }
+                                        },
+                                        {
+                                            type: 'scatter',
+                                            symbolSize: symbolSize,
+                                            xAxisIndex: 3,
+                                            yAxisIndex: 3,
+                                            encode: {
+                                                x: '第一年飞行总次数',
+                                                y: '第二年飞行总次数',
+                                                tooltip: [0, 1, 2, 3, 4]
+                                            }
+                                        }
+                                    ]
+                                };
+                                myecharts.setOption(option);
+                            }, "json")
+                        })
+                    </script>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

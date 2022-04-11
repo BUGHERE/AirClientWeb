@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>乘机交易量前十的城市</title>
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+</head>
+<body style="background-color: #5a6268">
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h2>乘机量前十的城市</h2>
+            <div class="table-responsive">
+    <div th:id="main" style="width: 100%;height: 500px;">
+
+        <script type="text/javascript">
+            $(function () {
+                var myecharts = echarts.init(document.getElementById("main"));
+                var citys = new Array();
+                var nums = new Array();
+                $.get("/citymax10.do", function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        citys.push(data[i].work_CITY);
+                        nums.push(data[i].count);
+                    }
+                    console.log(citys);
+                    console.log(nums);
+                    var option = {
+                        title: {
+                            text: '乘机量前十的城市',
+                            textStyle: {
+                                color: 'red'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            top: '5%',
+                            left: 'center'
+                        },
+                        series: [
+                            {
+                                name: '城市',
+                                type: 'pie',
+                                radius: ['40%', '70%'],
+                                avoidLabelOverlap: false,
+                                itemStyle: {
+                                    borderRadius: 10,
+                                    borderColor: '#fff',
+                                    borderWidth: 2
+                                },
+                                label: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    label: {
+                                        show: true,
+                                        fontSize: '40',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                labelLine: {
+                                    show: false
+                                },
+                                data: [
+                                    /*{value: 1048, name: '搜索引擎'},
+                                    {value: 735, name: '直接访问'},
+                                    {value: 580, name: '邮件营销'},
+                                    {value: 484, name: '联盟广告'},
+                                    {value: 300, name: '视频广告'}*/
+                                    {value: nums[0], name: citys[0]},
+                                    {value: nums[1], name: citys[1]},
+                                    {value: nums[2], name: citys[2]},
+                                    {value: nums[3], name: citys[3]},
+                                    {value: nums[4], name: citys[4]},
+                                    {value: nums[5], name: citys[5]},
+                                    {value: nums[6], name: citys[6]},
+                                    {value: nums[7], name: citys[7]},
+                                    {value: nums[8], name: citys[8]},
+                                    {value: nums[9], name: citys[9]}
+                                ]
+                            }
+                        ]
+                    };
+                    myecharts.setOption(option);
+                }, "json")
+            })
+        </script>
+    </div>
+</div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

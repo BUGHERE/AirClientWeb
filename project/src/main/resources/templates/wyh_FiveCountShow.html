@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://thymeleaf.com">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.js}"></script>
+</head>
+
+<body>
+<div th:insert="common/bar::top"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="table-responsive" align="center">
+            <div id="chart" style="width: 80%; height: 500px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    myChart.showLoading();
+
+                    $.get("/getAllFiveCount", function (data) {
+                        myChart.hideLoading();
+                        var itemStyle = {
+                            opacity: 0.8
+                        };
+
+                        var sizeFunction = function (x) {
+                            var y = Math.sqrt(x / 5e2) + 0.1;
+                            return y * 80;
+                        };
+                        // Schema:
+                        var schema = [
+                            {name: 'Income', index: 0, text: '客户等级', unit: ''},
+                            {name: 'LifeExpectancy', index: 1, text: '人数', unit: ''},
+                            {name: 'Population', index: 2, text: '规模', unit: ''},
+                            {name: 'Country', index: 3, text: '国家', unit: ''}
+                        ];
+
+                        var data_convert = {
+                            "counties": ["CA", "CN", "DE", "HK", "JP", "PT", "SG", "TH", "TW", "US", "BR", "AE", "AU", "FR", "ID", "KR", "MO", "MY", "NL", "PH", "SE", "AA", "BD", "BE", "CH", "FI", "IL", "IR", "IT", "KH", "MA", "PK", "VT", "GN", "IN", "MV", "AN", "AR", "BS", "CY", "ES", "NG", "NZ", "UK", "ZA", "GE", "HN", "MX", "AT", "GH", "GU", "HU", "LB", "NA", "SA", "SK", "UY", "AS", "BI", "BZ", "CM", "EC", "EG", "FL", "GT", "IA", "IE", "KE", "KZ", "LA", "MS", "NI", "PN", "PS", "RE", "RO", "SI", "SU", "SW", "VN", "YE", "FO", "GB", "GL", "KA", "KO", "MN", "MZ", "NO", "OM", "PA", "PE", "PP", "PR", "SN", "TK", "TR", "UA", "UV", "UZ", "ZW", "AB", "AZ", "BB", "BG", "BN", "CC", "CD", "CL", "CR", "DK", "FA", "NE", "RU"]
+                            , "timeline": [2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013], "series": []
+                        };
+                        for (var i = 2004; i <= 2013; i++)
+                            data_convert.series[i - 2004] = new Array();
+                        // data_convert.series.push(new Array());
+                        var index = 2004;
+                        for (var i = 0; i < data.length; i++) {
+                            if (2004 <= data[i].ffp_date <= 2013)
+                                data_convert.series[data[i].ffp_date - 2004].push([data[i].ffp_tier, data[i].number,
+                                    data[i].number ^ 2, data[i].work_country, data[i].ffp_date]);
+                            else
+                                console.log("wrong data");
+                        }
+                        console.log(data_convert);
+
+                        option = {
+                            baseOption: {
+                                timeline: {
+                                    axisType: 'category',
+                                    orient: 'vertical',
+                                    autoPlay: true,
+                                    inverse: true,
+                                    playInterval: 1000,
+                                    left: null,
+                                    right: 0,
+                                    top: 20,
+                                    bottom: 20,
+                                    width: 55,
+                                    height: null,
+                                    symbol: 'none',
+                                    checkpointStyle: {
+                                        borderWidth: 2
+                                    },
+                                    controlStyle: {
+                                        showNextBtn: false,
+                                        showPrevBtn: false
+                                    },
+                                    data: []
+                                },
+                                title: [{
+                                    text: data_convert.timeline[0],
+                                    textAlign: 'center',
+                                    left: '63%',
+                                    top: '55%',
+                                    textStyle: {
+                                        fontSize: 100
+                                    }
+                                }, {
+                                    text: '航空公司各国客户等级与人数演变',
+                                    left: 'center',
+                                    top: 10,
+                                    textStyle: {
+                                        fontWeight: 'normal',
+                                        fontSize: 20
+                                    }
+                                }],
+                                tooltip: {
+                                    padding: 5,
+                                    borderWidth: 1,
+                                    formatter: function (obj) {
+                                        var value = obj.value;
+                                        return schema[3].text + '：' + value[3] + '<br>'
+                                            + schema[1].text + '：' + value[1] + schema[1].unit + '<br>'
+                                            + schema[0].text + '：' + value[0] + schema[0].unit + '<br>'
+                                            + schema[2].text + '：' + value[2] + '<br>';
+                                    }
+                                },
+                                grid: {
+                                    top: 100,
+                                    containLabel: true,
+                                    left: 30,
+                                    right: '110'
+                                },
+                                xAxis: {
+                                    type: 'value',
+                                    name: '等级',
+                                    max: 7,
+                                    min: 3,
+                                    nameGap: 25,
+                                    nameLocation: 'middle',
+                                    nameTextStyle: {
+                                        fontSize: 18
+                                    },
+                                    splitLine: {
+                                        show: false
+                                    },
+                                    axisLabel: {
+                                        formatter: '{value} 级'
+                                    }
+                                },
+                                yAxis: {
+                                    type: 'log',
+                                    name: '人数',
+                                    min: 1,
+                                    max: 100000,
+                                    nameTextStyle: {
+                                        fontSize: 18
+                                    },
+                                    splitLine: {
+                                        show: false
+                                    },
+                                    axisLabel: {
+                                        formatter: '{value} 人'
+                                    }
+                                },
+                                visualMap: [
+                                    {
+                                        show: false,
+                                        dimension: 3,
+                                        categories: data_convert.counties,
+                                        inRange: {
+                                            color: (function () {
+                                                var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+                                                return colors.concat(colors);
+                                            })()
+                                        }
+                                    }
+                                ],
+                                series: [
+                                    {
+                                        type: 'scatter',
+                                        itemStyle: itemStyle,
+                                        data: data_convert.series[0],
+                                        symbolSize: function (val) {
+                                            return sizeFunction(val[2]);
+                                        }
+                                    }
+                                ],
+                                animationDurationUpdate: 1000,
+                                animationEasingUpdate: 'quinticInOut'
+                            },
+                            options: []
+                        };
+
+                        for (var n = 0; n < data_convert.timeline.length; n++) {
+                            option.baseOption.timeline.data.push(data_convert.timeline[n]);
+                            option.options.push({
+                                title: {
+                                    show: true,
+                                    'text': data_convert.timeline[n] + ''
+                                },
+                                series: {
+                                    name: data_convert.timeline[n],
+                                    type: 'scatter',
+                                    itemStyle: itemStyle,
+                                    data: data_convert.series[n],
+                                    symbolSize: function (val) {
+                                        return sizeFunction(val[2]);
+                                    }
+                                }
+                            });
+                        }
+                        option && myChart.setOption(option);
+                        console.log("finished");
+                    }, "json")
+                })
+            </script>
+        </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

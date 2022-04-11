@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/ecStat.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<div th:insert="common/bar::top"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h2>乘机次数与积分数表</h2>
+            <div class="table-responsive">
+                <div id="main" style="width: 600px;height: 400px;"></div>
+                <script type="text/javascript">
+                   $(function () {
+                      var myecharts = echarts.init(document.getElementById("main"));
+                    $.get("pointsresult.do",function (data) {
+
+                        var option;
+
+                        var option = {
+                            dataset: {
+                                source: data
+                            },
+                            grid: {containLabel: true},
+                            xAxis: {name: '积分数'},
+                            yAxis: {type: 'category'},
+                            visualMap: {
+                                orient: 'horizontal',
+                                left: 'center',
+                                min: 0,
+                                max: 100,
+                                text: ['高乘机次数', '低乘机次数'],
+                                // Map the score column to color
+                                dimension: 0,
+                                inRange: {
+                                    color: ['#65B581', '#FFCE34', '#FD665F']
+                                }
+                            },
+                            series: [
+                                {
+                                    type: 'bar',
+                                    encode: {
+                                        // Map the "amount" column to X axis.
+                                        x: '积分总数',
+                                        // Map the "product" column to Y axis
+                                        y: '会员编号'
+                                    }
+                                }
+                            ]
+                        }
+
+
+
+
+                        myecharts.setOption(option);
+                    },"json")
+
+                   })
+
+
+                </script>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+</body>
+
+</html>

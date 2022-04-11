@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<div th:insert="common/bar::top"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h2>入会时间与人数的趋势图</h2>
+            <div class="table-responsive">
+                <div id="main" style="width: 100%;height: 400px;"></div>
+                <script type="text/javascript">
+                   $(function () {
+                      var myecharts = echarts.init(document.getElementById("main"));
+                    $.get("finddatebuy.do",function (data) {
+
+                        var option;
+                        option = {
+                            title: {
+                                text: '每日入会趋势图',
+                                left: '1%'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            grid: {
+                                left: '5%',
+                                right: '15%',
+                                bottom: '10%'
+                            },
+                            xAxis: {data: data.map(function (item) {
+                                    return item[0];
+                                })},
+                            yAxis: {},
+                            toolbox: {
+                                right: 10,
+                                feature: {
+                                    dataZoom: {
+                                        yAxisIndex: 'none'
+                                    },
+                                    restore: {},
+                                    saveAsImage: {}
+                                }
+                            },
+                            dataZoom: [{
+                                startValue: '2004/11/01'
+                            }, {
+                                type: 'inside'
+                            }],
+                            visualMap: {
+                                top: 50,
+                                right: 10,
+                                pieces: [{
+                                    gt: 0,
+                                    lte: 20,
+                                    color: '#93CE07'
+                                }, {
+                                    gt: 20,
+                                    lte: 40,
+                                    color: '#FBDB0F'
+                                }, {
+                                    gt: 40,
+                                    lte: 60,
+                                    color: '#FC7D02'
+                                }, {
+                                    gt: 60,
+                                    lte: 80,
+                                    color: '#FD0100'
+                                }, {
+                                    gt: 80,
+                                    lte: 100,
+                                    color: '#AA069F'
+                                }, {
+                                    gt: 100,
+                                    color: '#AC3B2A'
+                                }],
+                                outOfRange: {
+                                    color: '#999'
+                                }
+                            },
+                            series: {
+                                name: '每日入会趋势图',
+                                type: 'line',
+                                data: data.map(function (item) {
+                                    return item[1];
+                                }),
+                                markLine: {
+                                    silent: true,
+                                    lineStyle: {
+                                        color: '#333'
+                                    },
+                                    data: [{
+                                        yAxis: 20
+                                    }, {
+                                        yAxis: 40
+                                    }, {
+                                        yAxis: 60
+                                    }, {
+                                        yAxis: 80
+                                    }, {
+                                        yAxis: 100
+                                    }]
+                                }
+                            }
+                        }
+
+
+                        myecharts.setOption(option);
+                    },"json")
+
+                   })
+
+
+                </script>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+</body>
+
+</html>

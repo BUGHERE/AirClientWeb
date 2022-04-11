@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>男女平均会员等级及平均年龄</title>
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+</head>
+<body>
+<div th:insert="common/bar::top"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h2>男女平均会员等级及平均年龄</h2>
+            <div class="table-responsive">
+        <div th:id="main" style="width: 100%;height: 500px">
+        <script type="text/javascript">
+            $(function () {
+                var myecharts = echarts.init(document.getElementById("main"));
+                var genders=new Array();
+                var avgLevels=new Array();
+                var avgAges=new Array();
+                $.get("/gender.do",function (data) {
+                    for(i=0;i<data.length;i++){
+                        genders.push(data[i].gender);
+                        avgLevels.push(data[i].avgLevel);
+                        avgAges.push(data[i].avgAge);
+                    }
+                    /*console.log(genders);
+                    console.log(avgLevels);
+                    console.log(avgAges);*/
+                    var option = {
+                        title: {
+                            text: ''
+                        },
+                        tooltip: {},
+                        legend: {
+                            data: ['平均会员等级'],
+                            data: ['平均年龄']
+                        },
+                        xAxis: {
+                            data: genders
+                        },
+                        yAxis: {},
+                        series: [{
+                            name: '平均会员等级',
+                            type: 'bar',
+                            data: avgLevels
+                        }, {
+                            name: '平均年龄',
+                            type: 'line',
+                            data: avgAges
+                        }],
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                mark: {
+                                    show: true
+                                },
+                                dataView: {
+                                    show: true,
+                                    readOnly: false
+                                },
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar']
+                                },
+                                restore: {
+                                    show: true
+                                },
+                                saveAsImage: {
+                                    show: true
+                                }
+                            }
+                        },
+                    }
+                    myecharts.setOption(option);
+                },"json")
+            })
+        </script>
+        </div></div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+server:
+  port: 8100
+#  servlet:
+#    context-path: /demo
+
+spring:
+  datasource:
+
+    username: root
+    password: 1234qwerQWER!@#$
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/air?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+
+    filters: stat,wall,log4j2
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    characterEncoding: UTF-8
+
+  mvc:
+    format:
+      date: yyyy-MM-dd
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    suffix: .html
+    prefix: classpath:/templates/
+
+  resources:
+    static-locations: classpath:/static/, classpath:/templates/
+
+mybatis:
+#  type-aliases-package: com.nk.domain
+  mapper-locations: classpath:mapper/*/*.xml
+logging:
+  level:
+    com.tjetc.dao: trace

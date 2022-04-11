@@ -1,0 +1,1517 @@
+<!-- tile1 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2>会员年龄及其相关情况</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_lz_age" style="width: 100%; height: 500px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var myecharts = echarts.init(document.getElementById("chart_lz_age"));
+                    var ages = new Array();
+                    var nums = new Array();
+                    var avg_fcs = new Array();
+                    $.get("/findaall.do", function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            ages.push(data[i].age);
+                            nums.push(data[i].num);
+                            avg_fcs.push(data[i].avg_fc);
+                        }
+                        var option = {
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'cross',
+                                    crossStyle: {
+                                        color: '#999'
+                                    }
+                                }
+                            },
+                            toolbox: {
+                                feature: {
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            legend: {
+                                data: ['人数', '人数', '平均乘机次数']
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: ages,
+                                    axisPointer: {
+                                        type: 'shadow'
+                                    }
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '人数',
+                                    min: 0,
+                                    max: 25000,
+                                    interval: 5000,
+                                    axisLabel: {
+                                        formatter: '{value} 人'
+                                    }
+                                },
+                                {
+                                    type: 'value',
+                                    name: '次数',
+                                    min: 0,
+                                    max: 15,
+                                    interval: 3,
+                                    axisLabel: {
+                                        formatter: '{value} 次'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '人数',
+                                    type: 'bar',
+                                    data: nums
+                                },
+
+                                {
+                                    name: '平均乘机次数',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: avg_fcs
+                                }
+                            ]
+                        };
+                        myecharts.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile2 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2>会员乘机次数与折扣关系表</h2>
+        <div class="table-responsive" align="center">
+            <div id="main" style="width: 80%; height: 500px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var myecharts = echarts.init(document.getElementById("main"));
+                    var fcr = new Array();
+                    var ad = new Array();
+                    $.get("/findadall.do", function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            fcr.push(data[i].flight_count_region);
+                            ad.push(data[i].avg_disc);
+                        }
+                        var option = {
+                            xAxis: {
+                                type: 'category',
+                                data: fcr
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: ad,
+                                type: 'line',
+                                smooth: true
+                            }]
+                        };
+                        myecharts.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile3 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2>会员飞行次数分布图</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_lz_region" style="width: 80%; height: 500px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var myecharts = echarts.init(document.getElementById("chart_lz_region"));
+                    var regions = new Array();
+                    $.get("/findrall.do", function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            regions.push(data[i]);
+                        }
+                        var option = {
+                            title: {
+                                text: '南丁格尔玫瑰图式',
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                            },
+                            legend: {
+                                left: 'center',
+                                top: 'bottom',
+                                data: regions.name
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            series: [
+                                {
+                                    name: '半径模式',
+                                    type: 'pie',
+                                    radius: [20, 140],
+                                    center: ['25%', '50%'],
+                                    roseType: 'radius',
+                                    itemStyle: {
+                                        borderRadius: 5
+                                    },
+                                    label: {
+                                        show: false
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            show: true
+                                        }
+                                    },
+                                    data: regions
+                                },
+                                {
+                                    name: '面积模式',
+                                    type: 'pie',
+                                    radius: [20, 140],
+                                    center: ['75%', '50%'],
+                                    roseType: 'area',
+                                    itemStyle: {
+                                        borderRadius: 5
+                                    },
+                                    data: regions
+                                }
+                            ]
+                        };
+                        myecharts.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile5 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2>会员乘机次数年变化情况</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_lz_year_change" style="width: 80%; height: 500px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var myecharts = echarts.init(document.getElementById("chart_lz_year_change"));
+                    var ages = new Array();
+                    var avg_fcs1s = new Array();
+                    var avg_fcs2s = new Array();
+                    $.get("/findycall.do", function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            ages.push(data[i].ageregion);
+                            avg_fcs1s.push(data[i].avg_fc1);
+                            avg_fcs2s.push(data[i].avg_fc2);
+                        }
+                        var option = {
+                            title: {
+                                text: '会员乘机次数年变化情况'
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'shadow'
+                                }
+                            },
+                            legend: {
+                                data: ['第一年', '第二年']
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '4%',
+                                bottom: '3%',
+                                containLabel: true
+                            },
+                            xAxis: {
+                                type: 'value',
+                                boundaryGap: [0, 0.01]
+                            },
+                            yAxis: {
+                                type: 'category',
+                                data: ages
+                            },
+                            series: [
+                                {
+                                    name: '第一年',
+                                    type: 'bar',
+                                    data: avg_fcs1s
+                                },
+                                {
+                                    name: '第二年',
+                                    type: 'bar',
+                                    data: avg_fcs2s
+                                }
+                            ]
+                        };
+                        myecharts.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile6 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-body color transparent-white rounded-bottom-corners">
+        <h2 align="center">用户注册年份分布</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_wyh_FfpDateYearCountShow" style="width: 80%; height: 650px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart_wyh_FfpDateYearCountShow");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    var data_external = [];
+
+
+                    $.get("/getAllFfpDateYearCount", function (data) {
+                        var option;
+                        var data_convert = [];
+                        for (let i = 0; i < data.length; i++) {
+                            data_convert.push({value: data[i].number, name: data[i].ffp_date});
+                        }
+                        console.log(data_convert);
+
+                        option = {
+                            title: {
+                                text: '',
+                                left: 'center',
+                                top: '8%',
+                                textStyle: {
+                                    color: '#235894'
+                                }
+                            },
+                            legend: {
+                                top: 'bottom'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            series: [
+                                {
+                                    name: '面积模式',
+                                    type: 'pie',
+                                    radius: [50, 250],
+                                    center: ['50%', '50%'],
+                                    roseType: 'area',
+                                    itemStyle: {
+                                        borderRadius: 8
+                                    },
+                                    data: data_convert
+                                }
+                            ]
+                        };
+                        option && myChart.setOption(option);
+                        window.addEventListener('resize', function () {
+                            myChart.resize();
+                        })
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile9 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">航空公司中国客户分布图</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_wyh_WorkProvinceCNCountShow" style="width: 100%; height: 680px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart_wyh_WorkProvinceCNCountShow");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    var data_external = [];
+
+                    // 地图标点
+                    var geoCoordMap = {
+                        //'其他': [123, 27],//大部分都是其他，影响效果
+                        '海外': [122, 26],
+                        '台湾': [121.5135, 25.0308],
+                        '黑龙江': [127.9688, 45.368],
+                        '内蒙古': [110.3467, 41.4899],
+                        "吉林": [125.8154, 44.2584],
+                        '北京': [116.4551, 40.2539],
+                        "辽宁": [123.1238, 42.1216],
+                        "河北": [114.4995, 38.1006],
+                        "天津": [117.4219, 39.4189],
+                        "山西": [112.3352, 37.9413],
+                        "陕西": [109.1162, 34.2004],
+                        "甘肃": [103.5901, 36.3043],
+                        "宁夏": [106.3586, 38.1775],
+                        "青海": [101.4038, 36.8207],
+                        "新疆": [87.9236, 43.5883],
+                        "西藏": [91.11, 29.97],
+                        "四川": [103.9526, 30.7617],
+                        "重庆": [108.384366, 30.439702],
+                        "山东": [117.1582, 36.8701],
+                        "河南": [113.4668, 34.6234],
+                        "江苏": [118.8062, 31.9208],
+                        "安徽": [117.29, 32.0581],
+                        "湖北": [114.3896, 30.6628],
+                        "浙江": [119.5313, 29.8773],
+                        "福建": [119.4543, 25.9222],
+                        "江西": [116.0046, 28.6633],
+                        "湖南": [113.0823, 28.2568],
+                        "贵州": [106.6992, 26.7682],
+                        "云南": [102.9199, 25.4663],
+                        "广东": [113.12244, 23.009505],
+                        "广西": [108.479, 23.1152],
+                        "海南": [110.3893, 19.8516],
+                        '上海': [121.4648, 31.2891],
+                        "香港": [114.171994, 22.281089],
+                        "澳门": [113.549403, 22.192961]
+                    };
+
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)//增大value，便于显示//这个乘数应该根据总量来定
+                                });
+                            }
+                        }
+                        return res;
+                    };
+
+                    $.get("/getAllWorkProvinceCNCount", function (data) {
+                        let map = new Map();
+                        let sum = 0;
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                sum += data[i].number
+                            }
+                        }
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                data_external.push({name: data[i].work_province, value: data[i].number});
+                            }
+                        }
+                        //data_external = Array.from(map);
+                        console.log("sum" + sum);
+                        console.log(data_external);
+                        console.log(convertData(data_external));
+
+                        option = {
+                            title: {
+                                text: '',
+                                subtext: '数据源',
+                                sublink: '/getAllWorkProvinceCNCount',
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item'
+                            },
+                            bmap: {
+                                center: [104.114129, 37.550339],
+                                zoom: 5,
+                                roam: true,
+                                mapStyle: {
+                                    styleJson: [{
+                                        'featureType': 'water',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#d1d1d1'
+                                        }
+                                    }, {
+                                        'featureType': 'land',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#f3f3f3'
+                                        }
+                                    }, {
+                                        'featureType': 'railway',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'highway',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#fdfdfd'
+                                        }
+                                    }, {
+                                        'featureType': 'highway',
+                                        'elementType': 'labels',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'arterial',
+                                        'elementType': 'geometry',
+                                        'stylers': {
+                                            'color': '#fefefe'
+                                        }
+                                    }, {
+                                        'featureType': 'arterial',
+                                        'elementType': 'geometry.fill',
+                                        'stylers': {
+                                            'color': '#fefefe'
+                                        }
+                                    }, {
+                                        'featureType': 'poi',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'green',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'subway',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'manmade',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#d1d1d1'
+                                        }
+                                    }, {
+                                        'featureType': 'local',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#d1d1d1'
+                                        }
+                                    }, {
+                                        'featureType': 'arterial',
+                                        'elementType': 'labels',
+                                        'stylers': {
+                                            'visibility': 'off'
+                                        }
+                                    }, {
+                                        'featureType': 'boundary',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#fefefe'
+                                        }
+                                    }, {
+                                        'featureType': 'building',
+                                        'elementType': 'all',
+                                        'stylers': {
+                                            'color': '#d1d1d1'
+                                        }
+                                    }, {
+                                        'featureType': 'label',
+                                        'elementType': 'labels.text.fill',
+                                        'stylers': {
+                                            'visibility': 'off',
+                                            'color': '#999999'
+                                        }
+                                    }]
+                                }
+                            },
+                            series: [
+                                {
+                                    name: '该地人数',
+                                    type: 'effectScatter',
+                                    coordinateSystem: 'bmap',
+                                    data: convertData(data_external),
+                                    symbolSize: function (val) {
+                                        if (val[2] < 10)
+                                            val[2] *= 1000;
+                                        else if (val[2] < 100)
+                                            val[2] *= 100;
+                                        return val[2] / sum * 100;
+                                    },
+                                    color: '#00ff99',
+                                    encode: {
+                                        value: 2
+                                    },
+                                    showEffectOn: 'render',
+                                    rippleEffect: {
+                                        brushType: 'stroke'
+                                    },
+                                    hoverAnimation: true,
+                                    label: {
+                                        formatter: '{b}',
+                                        position: 'right',
+                                        show: true
+                                    },
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowColor: '#333'
+                                    },
+                                    zlevel: 1
+                                }
+                            ]
+                        };
+                        option && myChart.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile10 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">工作人数最多的四个国家乘客相关信息</h2>
+        <div class="table-responsive">
+            <div id="chart_wyh_WorkProvinceCNCountShow2" style="width: 90%; height: 660px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart_wyh_WorkProvinceCNCountShow2");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    var data_external = [];
+
+                    // 地图标点
+                    var geoCoordMap = {
+                        //'其他': [123, 27],//大部分都是其他，影响效果
+                        '海外': [122, 26],
+                        '台湾': [121.5135, 25.0308],
+                        '黑龙江': [127.9688, 45.368],
+                        '内蒙古': [110.3467, 41.4899],
+                        "吉林": [125.8154, 44.2584],
+                        '北京': [116.4551, 40.2539],
+                        "辽宁": [123.1238, 42.1216],
+                        "河北": [114.4995, 38.1006],
+                        "天津": [117.4219, 39.4189],
+                        "山西": [112.3352, 37.9413],
+                        "陕西": [109.1162, 34.2004],
+                        "甘肃": [103.5901, 36.3043],
+                        "宁夏": [106.3586, 38.1775],
+                        "青海": [101.4038, 36.8207],
+                        "新疆": [87.9236, 43.5883],
+                        "西藏": [91.11, 29.97],
+                        "四川": [103.9526, 30.7617],
+                        "重庆": [108.384366, 30.439702],
+                        "山东": [117.1582, 36.8701],
+                        "河南": [113.4668, 34.6234],
+                        "江苏": [118.8062, 31.9208],
+                        "安徽": [117.29, 32.0581],
+                        "湖北": [114.3896, 30.6628],
+                        "浙江": [119.5313, 29.8773],
+                        "福建": [119.4543, 25.9222],
+                        "江西": [116.0046, 28.6633],
+                        "湖南": [113.0823, 28.2568],
+                        "贵州": [106.6992, 26.7682],
+                        "云南": [102.9199, 25.4663],
+                        "广东": [113.12244, 23.009505],
+                        "广西": [108.479, 23.1152],
+                        "海南": [110.3893, 19.8516],
+                        '上海': [121.4648, 31.2891],
+                        "香港": [114.171994, 22.281089],
+                        "澳门": [113.549403, 22.192961]
+                    };
+
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)//增大value，便于显示//这个乘数应该根据总量来定
+                                });
+                            }
+                        }
+                        return res;
+                    };
+
+                    $.get("/getAllWorkProvinceCNCount", function (data) {
+                        let map = new Map();
+                        let sum = 0;
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                sum += data[i].number
+                            }
+                        }
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                data_external.push({name: data[i].work_province, value: data[i].number});
+                            }
+                        }
+                        //data_external = Array.from(map);
+                        console.log("sum" + sum);
+                        console.log(data_external);
+                        console.log(convertData(data_external));
+
+                        var data_convert = convertData(data_external);
+                        console.log("data_convert:" + data_convert);
+                        var data_hot_value = new Array();
+                        for (let i = 0; i < data_convert.length; i++) {
+                            data_hot_value[i] = [data_convert[i].value[0], data_convert[i].value[1], data_convert[i].value[2]];
+                        }
+                        console.log("hot values:" + data_hot_value);
+                        console.log(data_hot_value.length);
+
+                        myChart.setOption(option = {
+                            title: {
+                                text: '航空公司中国客户分布热力图',
+                                subtext: '数据源',
+                                sublink: '/getAllWorkProvinceCNCount',
+                                left: 'center'
+                            },
+                            animation: false,
+                            bmap: {
+                                center: [104.114129, 37.550339],
+                                zoom: 5,
+                                roam: true
+                            },
+                            visualMap: {
+                                show: false,
+                                top: 'top',
+                                min: 0,
+                                max: 5,
+                                seriesIndex: 0,
+                                calculable: true,
+                                inRange: {
+                                    color: ['blue', 'blue', 'green', 'yellow', 'red']
+                                }
+                            },
+                            series: [{
+                                type: 'heatmap',
+                                coordinateSystem: 'bmap',
+                                data: data_hot_value,
+                                pointSize: 30,
+                                blurSize: 36
+                            }]
+                        });
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile11 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">用户成绩次数与年龄的关系</h2>
+        <div class="table-responsive">
+            <div id="chart_wyj_agecount" style="width: 100%;height: 600px">
+                <script type="text/javascript">
+                    $(function () {
+                        var myecharts = echarts.init(document.getElementById("chart_wyj_agecount"));
+                        var ages = new Array();
+                        var nums = new Array();
+                        $.get("/agecount.do", function (data) {
+                            for (i = 0; i < data.length; i++) {
+                                ages.push(data[i].age);
+                                nums.push(data[i].count);
+                            }
+                            console.log(ages);
+                            console.log(nums);
+                            var option = {
+                                title: {
+                                    text: '',
+                                    subtext: '不包括年龄保密的乘客',
+                                    left: 10
+                                },
+                                toolbox: {
+                                    feature: {
+                                        dataZoom: {
+                                            yAxisIndex: false
+                                        },
+                                        saveAsImage: {
+                                            pixelRatio: 2
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    trigger: 'axis',
+                                    axisPointer: {
+                                        type: 'shadow'
+                                    }
+                                },
+                                grid: {
+                                    bottom: 90
+                                },
+                                dataZoom: [{
+                                    type: 'inside'
+                                }, {
+                                    type: 'slider'
+                                }],
+                                xAxis: {
+                                    data: ages,
+                                    silent: false,
+                                    splitLine: {
+                                        show: false
+                                    },
+                                    splitArea: {
+                                        show: false
+                                    },
+                                    name: '年龄'
+                                },
+                                yAxis: {
+                                    splitArea: {
+                                        show: false
+                                    },
+                                    name: '乘机次数',
+                                    nameLocation: 'center',
+                                    nameGap: 60,
+                                    nameTextStyle: {
+                                        color: 'blue',
+                                        fontsize: 50
+                                    }
+                                },
+                                series: [{
+                                    type: 'bar',
+                                    data: nums,
+                                    // Set `large` for large data amount
+                                    large: true
+                                }]
+                            };
+                            myecharts.setOption(option);
+                        }, "json")
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile12 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">乘机量前十的城市</h2>
+        <div class="table-responsive">
+            <div id="chart_wyj_citymax10" style="width: 100%;height: 500px;">
+
+                <script type="text/javascript">
+                    $(function () {
+                        var myecharts = echarts.init(document.getElementById("chart_wyj_citymax10"));
+                        var citys = new Array();
+                        var nums = new Array();
+                        $.get("/citymax10.do", function (data) {
+                            for (i = 0; i < data.length; i++) {
+                                citys.push(data[i].work_CITY);
+                                nums.push(data[i].count);
+                            }
+                            console.log(citys);
+                            console.log(nums);
+                            var option = {
+                                title: {
+                                    text: '乘机量前十的城市',
+                                    textStyle: {
+                                        color: 'red'
+                                    }
+                                },
+                                tooltip: {
+                                    trigger: 'item'
+                                },
+                                legend: {
+                                    top: '5%',
+                                    left: 'center'
+                                },
+                                series: [
+                                    {
+                                        name: '城市',
+                                        type: 'pie',
+                                        radius: ['40%', '70%'],
+                                        avoidLabelOverlap: false,
+                                        itemStyle: {
+                                            borderRadius: 10,
+                                            borderColor: '#fff',
+                                            borderWidth: 2
+                                        },
+                                        label: {
+                                            show: false,
+                                            position: 'center'
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: true,
+                                                fontSize: '40',
+                                                fontWeight: 'bold'
+                                            }
+                                        },
+                                        labelLine: {
+                                            show: false
+                                        },
+                                        data: [
+                                            /*{value: 1048, name: '搜索引擎'},
+                                            {value: 735, name: '直接访问'},
+                                            {value: 580, name: '邮件营销'},
+                                            {value: 484, name: '联盟广告'},
+                                            {value: 300, name: '视频广告'}*/
+                                            {value: nums[0], name: citys[0]},
+                                            {value: nums[1], name: citys[1]},
+                                            {value: nums[2], name: citys[2]},
+                                            {value: nums[3], name: citys[3]},
+                                            {value: nums[4], name: citys[4]},
+                                            {value: nums[5], name: citys[5]},
+                                            {value: nums[6], name: citys[6]},
+                                            {value: nums[7], name: citys[7]},
+                                            {value: nums[8], name: citys[8]},
+                                            {value: nums[9], name: citys[9]}
+                                        ]
+                                    }
+                                ]
+                            };
+                            myecharts.setOption(option);
+                        }, "json")
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile13 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">飞行次数/票价/积分大数据表</h2>
+        <div class="table-responsive">
+            <div style="text-align: center;color: #007bff"></div>
+            <div id="chart_wyj_data1" style="width: 100%;height: 600px">
+                <script type="text/javascript">
+                    $(function () {
+                        var myecharts = echarts.init(document.getElementById("chart_wyj_data1"));
+                        $.get("/data1.do", function (data) {
+                            var sizeValue = '57%';
+                            var symbolSize = 2.5;
+                            var option = {
+                                legend: {},
+                                tooltip: {},
+                                toolbox: {
+                                    left: 'center',
+                                    feature: {
+                                        dataZoom: {}
+                                    }
+                                },
+                                grid: [
+                                    {right: sizeValue, bottom: sizeValue},
+                                    {left: sizeValue, bottom: sizeValue},
+                                    {right: sizeValue, top: sizeValue},
+                                    {left: sizeValue, top: sizeValue}
+                                ],
+                                xAxis: [
+                                    {
+                                        type: 'value',
+                                        gridIndex: 0,
+                                        name: '总飞行次数',
+                                        axisLabel: {rotate: 50, interval: 0}
+                                    },
+                                    {
+                                        type: 'value',
+                                        gridIndex: 1,
+                                        name: '第一年飞行总次数',
+                                        axisLabel: {rotate: 50, interval: 0}
+                                    },
+                                    {
+                                        type: 'value',
+                                        gridIndex: 2,
+                                        name: '第二年飞行总次数',
+                                        axisLabel: {rotate: 50, interval: 0}
+                                    },
+                                    {
+                                        type: 'value',
+                                        gridIndex: 3,
+                                        name: '第一年飞行总次数',
+                                        axisLabel: {rotate: 50, interval: 0}
+                                    }
+                                ],
+                                yAxis: [
+                                    {type: 'value', gridIndex: 0, name: '总积分'},
+                                    {type: 'value', gridIndex: 1, name: '第一年总票价'},
+                                    {type: 'value', gridIndex: 2, name: '第二年总票价'},
+                                    {type: 'value', gridIndex: 3, name: '第二年飞行总次数'}
+                                ],
+                                dataset: {
+                                    /*dimensions: [
+                                        'Income',
+                                        'Life Expectancy',
+                                        'Population',
+                                        'Country',
+                                        {name: 'Year', type: 'ordinal'}
+                                    ],*/
+                                    source: data
+                                },
+                                series: [
+                                    {
+                                        type: 'scatter',
+                                        symbolSize: symbolSize,
+                                        xAxisIndex: 0,
+                                        yAxisIndex: 0,
+                                        encode: {
+                                            x: '总飞行次数',
+                                            y: '总积分',
+                                            tooltip: [0, 1, 2, 3, 4]
+                                        }
+                                    },
+                                    {
+                                        type: 'scatter',
+                                        symbolSize: symbolSize,
+                                        xAxisIndex: 1,
+                                        yAxisIndex: 1,
+                                        encode: {
+                                            x: '第一年飞行总次数',
+                                            y: '第一年总票价',
+                                            tooltip: [0, 1, 2, 3, 4]
+                                        }
+                                    },
+                                    {
+                                        type: 'scatter',
+                                        symbolSize: symbolSize,
+                                        xAxisIndex: 2,
+                                        yAxisIndex: 2,
+                                        encode: {
+                                            x: '第二年飞行总次数',
+                                            y: '第二年总票价',
+                                            tooltip: [0, 1, 2, 3, 4]
+                                        }
+                                    },
+                                    {
+                                        type: 'scatter',
+                                        symbolSize: symbolSize,
+                                        xAxisIndex: 3,
+                                        yAxisIndex: 3,
+                                        encode: {
+                                            x: '第一年飞行总次数',
+                                            y: '第二年飞行总次数',
+                                            tooltip: [0, 1, 2, 3, 4]
+                                        }
+                                    }
+                                ]
+                            };
+                            myecharts.setOption(option);
+                        }, "json")
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile14 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">男女平均会员等级及平均年龄</h2>
+        <div class="table-responsive">
+            <div id="chart_wyj_gender" style="width: 100%;height: 500px">
+                <script type="text/javascript">
+                    $(function () {
+                        var myecharts = echarts.init(document.getElementById("chart_wyj_gender"));
+                        var genders = new Array();
+                        var avgLevels = new Array();
+                        var avgAges = new Array();
+                        $.get("/gender.do", function (data) {
+                            for (i = 0; i < data.length; i++) {
+                                genders.push(data[i].gender);
+                                avgLevels.push(data[i].avgLevel);
+                                avgAges.push(data[i].avgAge);
+                            }
+                            /*console.log(genders);
+                            console.log(avgLevels);
+                            console.log(avgAges);*/
+                            var option = {
+                                title: {
+                                    text: ''
+                                },
+                                tooltip: {},
+                                legend: {
+                                    data: ['平均会员等级'],
+                                    data: ['平均年龄']
+                                },
+                                xAxis: {
+                                    data: genders
+                                },
+                                yAxis: {},
+                                series: [{
+                                    name: '平均会员等级',
+                                    type: 'bar',
+                                    data: avgLevels
+                                }, {
+                                    name: '平均年龄',
+                                    type: 'line',
+                                    data: avgAges
+                                }],
+                                toolbox: {
+                                    show: true,
+                                    feature: {
+                                        mark: {
+                                            show: true
+                                        },
+                                        dataView: {
+                                            show: true,
+                                            readOnly: false
+                                        },
+                                        magicType: {
+                                            show: true,
+                                            type: ['line', 'bar']
+                                        },
+                                        restore: {
+                                            show: true
+                                        },
+                                        saveAsImage: {
+                                            show: true
+                                        }
+                                    }
+                                },
+                            }
+                            myecharts.setOption(option);
+                        }, "json")
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile16 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">工作人数最多的四个国家乘客相关信息</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_ycw_allavg" style="width: 80%;height: 400px; "></div>
+            <script type="text/javascript">
+                $(function () {
+                    console.log("start");
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_allavg"));
+                    $.get("/avg.do", function (data) {//竟然是没有加这个/的问题/avg.do
+
+                        var option;
+
+                        option = {
+                            legend: {},
+                            tooltip: {},
+                            dataset: {
+                                source: data
+                            },
+                            xAxis: {type: 'category'},
+                            yAxis: {},
+                            // Declare several bar series, each will be mapped
+                            // to a column of dataset.source by default.
+                            series: [
+                                {type: 'bar'},
+                                {type: 'bar'},
+                                {type: 'bar'}
+                            ]
+                        }
+                        myecharts.setOption(option);
+                        console.log("finished");
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile18 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">乘机次数与积分数表</h2>
+        <div class="table-responsive">
+            <div id="chart_ycw_points" style="width: 100%;height: 400px;"></div>
+            <script type="text/javascript">
+                $(function () {
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_points"));
+                    $.get("/pointsresult.do", function (data) {
+
+                        var option;
+
+                        var option = {
+                            dataset: {
+                                source: data
+                            },
+                            grid: {containLabel: true},
+                            xAxis: {name: '积分数'},
+                            yAxis: {type: 'category'},
+                            visualMap: {
+                                orient: 'horizontal',
+                                left: 'center',
+                                min: 0,
+                                max: 100,
+                                text: ['高乘机次数', '低乘机次数'],
+                                // Map the score column to color
+                                dimension: 0,
+                                inRange: {
+                                    color: ['#65B581', '#FFCE34', '#FD665F']
+                                }
+                            },
+                            series: [
+                                {
+                                    type: 'bar',
+                                    encode: {
+                                        // Map the "amount" column to X axis.
+                                        x: '积分总数',
+                                        // Map the "product" column to Y axis
+                                        y: '会员编号'
+                                    }
+                                }
+                            ]
+                        }
+
+
+                        myecharts.setOption(option);
+                    }, "json")
+
+                })
+
+
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile19 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">客户男女比例饼状图</h2>
+        <div class="table-responsive">
+            <div id="chart_ycw_sex" style="width: 100%;height: 400px;"></div>
+            <script type="text/javascript">
+                $(function () {
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_sex"));
+                    var gender = new Array();
+                    var number = new Array();
+                    $.get("/findsex.do", function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            gender.push(data[i].gender);
+                            number.push(data[i].sumnum);
+                        }
+                        var option;
+                        option = {
+                            tooltip: {
+                                trigger: 'item'
+                            },
+                            legend: {
+                                top: '5%',
+                                left: 'center'
+                            },
+                            series: [
+                                {
+                                    name: '性别',
+                                    type: 'pie',
+                                    radius: ['40%', '70%'],
+                                    avoidLabelOverlap: false,
+                                    label: {
+                                        show: false,
+                                        position: 'center'
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            show: true,
+                                            fontSize: '40',
+                                            fontWeight: 'bold'
+                                        }
+                                    },
+                                    labelLine: {
+                                        show: false
+                                    },
+                                    data: [
+                                        {value: number[0], name: gender[0]},
+                                        {value: number[1], name: gender[1]}
+                                    ]
+                                }
+                            ]
+                        };
+
+
+                        myecharts.setOption(option);
+                    }, "json")
+
+                })
+
+
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile20卡 -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">第一年与第二年坐飞机次数散点图</h2>
+        <div class="table-responsive">
+            <div id="chart_ycw_yearrelation" style="width: 100%;height: 400px;"></div>
+            <script type="text/javascript">
+                $(function () {
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_yearrelation"));
+                    $.get("/findyearrelation.do", function (data) {
+
+                        var option;
+
+                        var option = {
+                            title: {
+                                text: 'Dispersion of house price based on the area',
+                                left: 'center',
+                                top: 0
+                            },
+                            visualMap: {
+                                min: 111,
+                                max: 0,
+                                dimension: 1,
+                                orient: 'vertical',
+                                right: 10,
+                                top: 'center',
+                                text: ['HIGH', 'LOW'],
+                                calculable: true,
+                                inRange: {
+                                    color: ['#f2c31a', '#24b7f2']
+                                }
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                axisPointer: {
+                                    type: 'cross'
+                                }
+                            },
+                            xAxis: [{
+                                type: 'value'
+                            }],
+                            yAxis: [{
+                                type: 'value'
+                            }],
+                            series: [{
+                                name: 'price-area',
+                                type: 'scatter',
+                                symbolSize: 5,
+                                // itemStyle: {
+                                //     normal: {
+                                //         borderWidth: 0.2,
+                                //         borderColor: '#fff'
+                                //     }
+                                // },
+                                data: data
+                            }]
+                        }
+
+
+                        myecharts.setOption(option);
+                    }, "json")
+
+                })
+
+
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">工作人数最多的四个国家乘客相关信息</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_ycw_allavg" style="width: 80%;height: 400px; "></div>
+            <script type="text/javascript">
+                $(function () {
+                    console.log("start");
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_allavg"));
+                    $.get("/avg.do", function (data) {//竟然是没有加这个/的问题/avg.do
+
+                        var option;
+
+                        option = {
+                            legend: {},
+                            tooltip: {},
+                            dataset: {
+                                source: data
+                            },
+                            xAxis: {type: 'category'},
+                            yAxis: {},
+                            // Declare several bar series, each will be mapped
+                            // to a column of dataset.source by default.
+                            series: [
+                                {type: 'bar'},
+                                {type: 'bar'},
+                                {type: 'bar'}
+                            ]
+                        }
+                        myecharts.setOption(option);
+                        console.log("finished");
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">工作人数最多的四个国家乘客相关信息</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_ycw_allavg" style="width: 80%;height: 400px; "></div>
+            <script type="text/javascript">
+                $(function () {
+                    console.log("start");
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_allavg"));
+                    $.get("/avg.do", function (data) {//竟然是没有加这个/的问题/avg.do
+
+                        var option;
+
+                        option = {
+                            legend: {},
+                            tooltip: {},
+                            dataset: {
+                                source: data
+                            },
+                            xAxis: {type: 'category'},
+                            yAxis: {},
+                            // Declare several bar series, each will be mapped
+                            // to a column of dataset.source by default.
+                            series: [
+                                {type: 'bar'},
+                                {type: 'bar'},
+                                {type: 'bar'}
+                            ]
+                        }
+                        myecharts.setOption(option);
+                        console.log("finished");
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<!-- tile -->
+<section class="tile transparent">
+    <!-- tile widget -->
+    <div class="tile-widget color transparent-black textured">
+        <h2 align="center">工作人数最多的四个国家乘客相关信息</h2>
+        <div class="table-responsive" align="center">
+            <div id="chart_ycw_allavg" style="width: 80%;height: 400px; "></div>
+            <script type="text/javascript">
+                $(function () {
+                    console.log("start");
+                    var myecharts = echarts.init(document.getElementById("chart_ycw_allavg"));
+                    $.get("/avg.do", function (data) {//竟然是没有加这个/的问题/avg.do
+
+                        var option;
+
+                        option = {
+                            legend: {},
+                            tooltip: {},
+                            dataset: {
+                                source: data
+                            },
+                            xAxis: {type: 'category'},
+                            yAxis: {},
+                            // Declare several bar series, each will be mapped
+                            // to a column of dataset.source by default.
+                            series: [
+                                {type: 'bar'},
+                                {type: 'bar'},
+                                {type: 'bar'}
+                            ]
+                        }
+                        myecharts.setOption(option);
+                        console.log("finished");
+                    }, "json")
+                })
+            </script>
+        </div>
+    </div>
+    <!-- /tile widget -->
+</section>
+<!-- /tile -->
+<div class="tile-widget color transparent-black textured">
+    <div class="tile-body color transparent-white rounded-bottom-corners">
+
+        <li class="active">
+            <a href="index.html">
+                <i class="fa fa-tachometer"></i> 全部
+                <!--                                    <span class="badge badge-red">1</span>这个是提醒角标-->
+            </a>
+        </li>
+        <!--                            下面是分类下拉框-->
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-list"></i> Forms <b class="fa fa-plus dropdown-plus"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="form-elements.html">
+                        <i class="fa fa-caret-right"></i> Common Elements
+                    </a>
+                </li>
+                <li>
+                    <a href="validation-elements.html">
+                        <i class="fa fa-caret-right"></i> Validation
+                    </a>
+                </li>
+                <li>
+                    <a href="form-wizard.html">
+                        <i class="fa fa-caret-right"></i> Form Wizard
+                    </a>
+                </li>
+            </ul>
+        </li>

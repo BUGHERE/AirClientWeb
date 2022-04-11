@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://thymeleaf.com">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.js}"></script>
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+
+</head>
+
+<body>
+<div th:insert="common/bar::top"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="table-responsive" align="center">
+            <div id="chart" style="width: 80%; height: 650px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    var data_external = [];
+
+
+                    $.get("/getAllFfpDateYearCount", function (data) {
+                        var option;
+                        var data_convert = [];
+                        for (let i = 0; i < data.length; i++) {
+                            data_convert.push({value: data[i].number, name: data[i].ffp_date});
+                        }
+                        console.log(data_convert);
+
+                        option = {
+                            title: {
+                                text: '用户注册年份分布',
+                                left: 'center',
+                                top: '8%',
+                                textStyle: {
+                                    color: '#235894'
+                                }
+                            },
+                            legend: {
+                                top: 'bottom'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            series: [
+                                {
+                                    name: '面积模式',
+                                    type: 'pie',
+                                    radius: [50, 250],
+                                    center: ['50%', '50%'],
+                                    roseType: 'area',
+                                    itemStyle: {
+                                        borderRadius: 8
+                                    },
+                                    data: data_convert
+                                }
+                            ]
+                        };
+                        option && myChart.setOption(option);
+                    }, "json")
+                })
+            </script>
+        </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="asserts/css/dashboard.css" rel="stylesheet">
+		<script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+		<script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+
+	<div th:insert="common/bar::top"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div th:insert="common/bar::#left"></div>
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<h2>会员省份分布前十图表</h2>
+					<div class="table-responsive" align="center">
+						<div id="main" style="width: 80%; height: 500px;"></div><script type="text/javascript">
+						$(function () { //页面加载的时候就会执行该函数。
+							var myecharts =echarts.init(document.getElementById("main"));
+							var province = new Array();
+							var number = new Array();
+							$.get("/findwpall.do",function (data) {
+								for (i=0;i<data.length;i++){
+									province.push(data[i].work_province);
+									number.push(data[i].num);
+								}
+								var option = {
+									tooltip: {
+										trigger: 'axis',
+										axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+											type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+										}
+									},
+									grid: {
+										left: '3%',
+										right: '4%',
+										bottom: '3%',
+										containLabel: true
+									},
+									xAxis: [
+										{
+											type: 'category',
+											data: province,
+											axisTick: {
+												alignWithLabel: true
+											}
+										}
+									],
+									yAxis: [
+										{
+											type: 'value'
+										}
+									],
+									series: [
+										{
+											name: '会员人数',
+											type: 'bar',
+											barWidth: '60%',
+											data: number
+										}
+									]
+								};
+								myecharts.setOption(option);
+							},"json")
+						})
+					</script>
+					</div>
+				</main>
+			</div>
+		</div>
+
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+
+
+	</body>
+
+</html>

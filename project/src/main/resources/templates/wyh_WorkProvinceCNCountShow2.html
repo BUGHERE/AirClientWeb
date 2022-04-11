@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://thymeleaf.com">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+	<link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+    <!--引入百度地图的js sdk，这里需要使用你在百度地图开发者平台申请的 ak-->
+    <script src="http://api.map.baidu.com/api?v=2.0&ak=B8aduKGELo51ZDwHgysIK9tBEgKl0xVI"></script>
+    <!-- 引入百度地图扩展 -->
+    <script src="asserts/dist/extension/bmap.min.js"></script>
+
+</head>
+
+<body>
+<div th:insert="common/bar::top"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="table-responsive">
+            <div id="chart" style="width: 90%; height: 660px;"></div>
+            <script type="text/javascript">
+                $(function () { //页面加载的时候就会执行该函数。
+                    var chartDom = document.getElementById("chart");
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    var data_external = [];
+
+                    // 地图标点
+                    var geoCoordMap = {
+                        //'其他': [123, 27],//大部分都是其他，影响效果
+                        '海外': [122, 26],
+                        '台湾': [121.5135, 25.0308],
+                        '黑龙江': [127.9688, 45.368],
+                        '内蒙古': [110.3467, 41.4899],
+                        "吉林": [125.8154, 44.2584],
+                        '北京': [116.4551, 40.2539],
+                        "辽宁": [123.1238, 42.1216],
+                        "河北": [114.4995, 38.1006],
+                        "天津": [117.4219, 39.4189],
+                        "山西": [112.3352, 37.9413],
+                        "陕西": [109.1162, 34.2004],
+                        "甘肃": [103.5901, 36.3043],
+                        "宁夏": [106.3586, 38.1775],
+                        "青海": [101.4038, 36.8207],
+                        "新疆": [87.9236, 43.5883],
+                        "西藏": [91.11, 29.97],
+                        "四川": [103.9526, 30.7617],
+                        "重庆": [108.384366, 30.439702],
+                        "山东": [117.1582, 36.8701],
+                        "河南": [113.4668, 34.6234],
+                        "江苏": [118.8062, 31.9208],
+                        "安徽": [117.29, 32.0581],
+                        "湖北": [114.3896, 30.6628],
+                        "浙江": [119.5313, 29.8773],
+                        "福建": [119.4543, 25.9222],
+                        "江西": [116.0046, 28.6633],
+                        "湖南": [113.0823, 28.2568],
+                        "贵州": [106.6992, 26.7682],
+                        "云南": [102.9199, 25.4663],
+                        "广东": [113.12244, 23.009505],
+                        "广西": [108.479, 23.1152],
+                        "海南": [110.3893, 19.8516],
+                        '上海': [121.4648, 31.2891],
+                        "香港": [114.171994, 22.281089],
+                        "澳门": [113.549403, 22.192961]
+                    };
+
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)//增大value，便于显示//这个乘数应该根据总量来定
+                                });
+                            }
+                        }
+                        return res;
+                    };
+
+                    $.get("/getAllWorkProvinceCNCount", function (data) {
+                        let map = new Map();
+                        let sum = 0;
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                sum += data[i].number
+                            }
+                        }
+                        for (let i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].work_province];
+                            if (geoCoord) {
+                                data_external.push({name: data[i].work_province, value: data[i].number});
+                            }
+                        }
+                        //data_external = Array.from(map);
+                        console.log("sum" + sum);
+                        console.log(data_external);
+                        console.log(convertData(data_external));
+
+                        var data_convert = convertData(data_external);
+                        console.log("data_convert:" + data_convert);
+                        var data_hot_value = new Array();
+                        for (let i = 0; i < data_convert.length; i++) {
+                            data_hot_value[i] = [data_convert[i].value[0], data_convert[i].value[1], data_convert[i].value[2]];
+                        }
+                        console.log("hot values:" + data_hot_value);
+                        console.log(data_hot_value.length);
+
+                        myChart.setOption(option = {
+                            title: {
+                                text: '航空公司中国客户分布热力图',
+                                subtext: '数据源',
+                                sublink: '/getAllWorkProvinceCNCount',
+                                left: 'center'
+                            },
+                            animation: false,
+                            bmap: {
+                                center: [104.114129, 37.550339],
+                                zoom: 5,
+                                roam: true
+                            },
+                            visualMap: {
+                                show: false,
+                                top: 'top',
+                                min: 0,
+                                max: 5,
+                                seriesIndex: 0,
+                                calculable: true,
+                                inRange: {
+                                    color: ['blue', 'blue', 'green', 'yellow', 'red']
+                                }
+                            },
+                            series: [{
+                                type: 'heatmap',
+                                coordinateSystem: 'bmap',
+                                data: data_hot_value,
+                                pointSize: 30,
+                                blurSize: 36
+                            }]
+                        });
+                    }, "json")
+                })
+            </script>
+        </div>
+		</main>
+    </div>
+</div>
+</body>
+</html>

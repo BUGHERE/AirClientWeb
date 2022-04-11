@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>年龄分布</title>
+    <link href="asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asserts/css/dashboard.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{asserts/js/jquery-1.10.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{asserts/js/echarts.min.js}"></script>
+</head>
+<body>
+<div th:insert="common/bar::top"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:insert="common/bar::#left"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="table-responsive">
+                <div th:id="main" style="width: 1000px;height: 600px">
+                    <script type="text/javascript">
+                        $(function () {
+                            var myecharts = echarts.init(document.getElementById("main"));
+                            var ages = new Array();
+                            var nums = new Array();
+                            $.get("/agecount.do", function (data) {
+                                for (i = 0; i < data.length; i++) {
+                                    ages.push(data[i].age);
+                                    nums.push(data[i].count);
+                                }
+                                console.log(ages);
+                                console.log(nums);
+                                var option = {
+                                    title: {
+                                        text: '用户成绩次数与年龄的关系',
+                                        subtext: '不包括年龄保密的乘客',
+                                        left: 10
+                                    },
+                                    toolbox: {
+                                        feature: {
+                                            dataZoom: {
+                                                yAxisIndex: false
+                                            },
+                                            saveAsImage: {
+                                                pixelRatio: 2
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        trigger: 'axis',
+                                        axisPointer: {
+                                            type: 'shadow'
+                                        }
+                                    },
+                                    grid: {
+                                        bottom: 90
+                                    },
+                                    dataZoom: [{
+                                        type: 'inside'
+                                    }, {
+                                        type: 'slider'
+                                    }],
+                                    xAxis: {
+                                        data: ages,
+                                        silent: false,
+                                        splitLine: {
+                                            show: false
+                                        },
+                                        splitArea: {
+                                            show: false
+                                        },
+                                        name: '年龄'
+                                    },
+                                    yAxis: {
+                                        splitArea: {
+                                            show: false
+                                        },
+                                        name: '乘机次数',
+                                        nameLocation: 'center',
+                                        nameGap: 60,
+                                        nameTextStyle: {
+                                            color: 'blue',
+                                            fontsize: 50
+                                        }
+                                    },
+                                    series: [{
+                                        type: 'bar',
+                                        data: nums,
+                                        // Set `large` for large data amount
+                                        large: true
+                                    }]
+                                };
+                                myecharts.setOption(option);
+                            }, "json")
+                        })
+                    </script>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
