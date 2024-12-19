@@ -1,4 +1,5 @@
 ## 介绍
+
 [AirClientWeb](https://github.com/BUGHERE/AirClientWeb)项目是一个航空公司客户数据可视化项目，本项目的技术栈包含 SpringBoot + MyBatis + Thymeleaf + Echarts + Mysql + HDFS + Hive + Sqoop
 
 ![image](https://github.com/BUGHERE/AirClientWeb/assets/55886903/8621155f-c771-4cc2-8ffc-cdce62275cbc)
@@ -9,7 +10,9 @@
 
 考虑到设备处理性能，我们并没有用这个完整的数据，我们截取其中的一部分（大概6万条数据）进行分析和处理
 
-## 数据处理（源码不包含这部分，仅作介绍）
+## 数据处理
+
+![alt text](image.png)
 
 本项目使用 HDFS + Hive + HBase 技术进行数据处理和存储，并通过 Sqoop 技术将数据存储到 Mysql 数据库中
 
